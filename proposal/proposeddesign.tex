@@ -27,15 +27,15 @@ Taking the normalized dot product between the query and document vectors will gi
 This works well in the context of history short answer questions because once keywords are pulled from the gold standard their presence in the answer can be validated.
 
 \subsection{Combining Techniques}
-By combining the two previously mentioned techniques, I can determine the important named entities and search for their existence in the answer. See the following example (Gold refers to the gold standard essay, against which all the other responses are graded:
+Combining the two previously mentioned techniques can determine the important named entities and also search for their existence in the answer. See the following example, in which \textit{Gold} refers to the gold standard essay, against which all the other responses are graded:
 \\\\
 \textit{Q: When was George Washington's birthday?}\\
 \textit{Gold: George Washington was born on February 22, 1732}\\
 \textit{Answer: George Washington was born on February 22, 1734}
 \\\\
-With a first pass with NER, the proposed system would be able to identify George Washington as type PERSON and his birth date as type DATE. I know now to check the answer for PERSON George Washington and DATE February 22, 1732. Additionally, because the order in which these words appear is known before the fact, I can then form a vectorized query and answer.
+Using NER allows the proposed system to identify George Washington as type PERSON and his birth date as type DATE. The system will now know to check the answer for PERSON George Washington and DATE February 22, 1732. Because the order in which these words appear is known beforehand, a vectorized query can be formed to probe the answer.
 
-Because each word appears only once in the gold standard document, all frequencies are one. The following is a vector respresentation of the gold document and the gold document after a pass over with NER.
+The following is a vector respresentation of the gold document and the gold document after a pass over with NER. Because each word appears only once in the gold standard document, all frequencies are one.
 \\\\
 $Doc_G=<1, 1, 1, 1, 1>$\\
 \textit{[PERSON George Washington] was born on [DATE February 22, 1732]}
@@ -44,26 +44,26 @@ Given these two important named entities, a query can be formed to analyze the s
 \\\\
 $Q=<1, 0, 0 , 0, 1>$
 \\\\
-Next, vectorize the second document. An important clarification is that the order the word frequencies appear in the second vector is the same order from the first vector. In other words, the vector of the second document contains the frequencies of the words in the second document in the order that they appear in the first document. So document two would look as follows:
+Next, vectorize the second document. An important clarification is that the order the word frequencies appear in the second vector is the same order from the first vector. In other words, the vectorized second document contains word frequencies in the order that they appear in the first document. So document two would look as follows:
 \\\\
-$Doc_A=<1, 0, 0, 0, 1$
+$Doc_A=<1, 0, 0, 0, 0>$
 \\\\
 Now to query the answer document, take the normalized dot product to determine the percentage of searched for terms that were actually found.
 \\\\
-$Doc_A \cdot Q = <1, 0, 0, 0, 1> \cdot <1, 0, 0, 0, 0>$\\
-$Doc_A \cdot Q = \frac{1*1 + 0*0 + 0*0 + 0*0 + 1*0}{2} $\\
+$Doc_A \cdot Q = <1, 0, 0, 0, 0> \cdot <1, 0, 0, 0, 1>$\\
+$Doc_A \cdot Q = \frac{1*1 + 0*0 + 0*0 + 0*0 + 0*1}{2} $\\
 $Doc_A \cdot Q = \frac{1}{2}$\\
 \\\\
-Only $\frac{1}{2}$ words were found in the answer, which was to be expected because the answer had incorrectly written the date. The result of multiplying $w1q$ and $w1a$, where $w1q$ and $w1a$ are the frequency that word one occurs in the query and the answer document, indicates whether that particular word appears in the answer. $w1$ in this case is \textit{George Washington}, so
+Only $\frac{1}{2}$ of searched for words were found in the answer, which was to be expected because the answer had incorrectly written the date. If $w1q$ and $w1a$ are the frequency that word one occurs in the query and the answer document, the result of multiplying $w1q$ and $w1a$ indicates whether that particular word appears in the answer. $w1$ in this case is \textit{George Washington}, and
 \\\\
 $w1q * w1a = 1*1 = 1$
 \\\\
-proves that \textit{George Washington} appears in the answer document.Likewise, if $w4q$ and $w4a$ are the frequency with which the date \textit{February 22, 1732} appears, the following proves that \textit{February 22, 1732}
+This proves that \textit{George Washington} appears in the answer document. Likewise, if $w5q$ and $w5a$ are the frequency with which the date \textit{February 22, 1732} appears, the following proves that \textit{February 22, 1732}is not contained in the answer.
 \\\\
-$w4q * w4a = 1*0 = 0$
+$w5q * w5a = 1*0 = 0$
 \\\
 
-In this project, I proposed to combine these techniques as shown above to determine which words are named entities and then search for the occurence of said entities in the answer.
+This project proposes to combine these techniques as shown above to determine which words are named entities and then search for the occurence of said entities in the answer.
 % \ref{fig:figIdName}
 
 % \begin{figure}[ht!]
