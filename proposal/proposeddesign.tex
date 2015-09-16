@@ -1,30 +1,30 @@
 \section{Proposed Design}
 \label{section:propeseddesign}
-I propose using a combination of Named Entity Recognition (NER) and Vector Similarity to objectively grade history answer questions. My goal is to use NER to discover the important details of the answer: people, places, events, countries, dates, etc. After discovering the important named entities, I will use Vector Similarity to validate the presence of these terms in the answer. The output of this proposed system will be an objective score.
+This paper proposes using a combination of Named Entity Recognition (NER) and vector space models to objectively grade history answer questions. The goal is to initially use NER to discover the important details of the answer: people, places, events, countries, dates, etc. After discovering the important named entities, vector space models will be used to validate the presence of these terms in the answer. The output of this proposed system will be an objective score.
 
-Initially, I plan to use an ideal essay response - also known as the gold standard, to grade the essay answer. If time, I would like to try using a large corpus instead of a gold standard essay to automatically grade the essay responses.
+Initially, the plan to use an ideal essay response - also known as the gold standard, to grade the essay answer. Time permitting, the next step would be to try using a large corpus instead of a gold standard essay to automatically grade the essay responses.
 
 \subsection{Named Entity Recognition}
- Named Entity Recognition is the ability to classify text to named-entity types such as persons, organizations and locations \cite{recognizing_named_entities_in_tweets}. This is especially useful in the context of history questions. Compared to other subjects, history is much less subjective and more about hard facts.
+ Named Entity Recognition is the ability to classify text into named-entity categories such as persons, organizations and locations \cite{recognizing_named_entities_in_tweets}, which is especially useful in the context of history questions. Compared to other subjects, history is much less subjective and focuses more on concrete details.
 
- I plan to use NER to pull out important people, places, locations, dates, and events from the gold standard essay. By knowing what key named entities are in the gold standard essay, I know what to look for in the actual answer.
+ The plan is to use NER to pull out important people, places, locations, dates, and events from the gold standard essay. The actual essay response can that be checked for occurence of these terms.
 
  \subsection{Vector Space Models}
-The vector space model represents documents and queries as frequency of words that appear in it. We can take the normalized dot product to determine how closely related two documents are \cite{the_book}.
+The vector space model is a way to represent a document as a vector containing word frequencies. Vectorizing two different documents allows the normalized dot product to determine how closely those related two documents are \cite{the_book}. This is one possible way to determine the similarity between the gold standard essay and the actual essay answer.
 
-This would be one possible way to determine how similar the two documents, the gold standard and the essay response, are. However, is the context of short answer history questions, this may not reveal too much. Many of the important facts will only be mentioned once or twice; the highest frequency words will probably be of the part of speech articles. This technique would also not give weight to the important named entities - missing a \textit{the} would be as penalized as missing an entity. Simply using Vector Space Models alone would be insufficient.
+However, in the context of short answer history questions, this may not reveal too much. Many of the important facts may only be mentioned once or twice; the highest frequency words will probably articles such as \textit{the}, \textit{a}, etc. This technique would also not give weight to the important named entities - missing a word such as \textit{the} would be as penalized as harshly as missing an entity. For this reason, simply using vector space models alone will be insufficient.
 
-However, there is another way that vector space models can be used. Queries are vectors with word frequencies to look for in the main document. Taking the normalized dot product will give you the fractional amount of words that were queried for that actually appear in the document.
+Fortunately, there exists an additional way that vector space models can be used. The existence of certain words in a document can be verified using vector queries.
 
-Let D be a document $D = <w1, w2, w3, w4, ...., wn>$, where $wi$ is the frequency of the \textit{ith} word in the document. If the first word is \textit{the}, $w1$ represents the number of times \textit{the} appears in the entire document.
+Let D be a document\\\\ $D = <w1, w2, w3, w4, ...., wn>$\\\\ where $wi$ is the frequency of the \textit{ith} word in the document. If the first word is \textit{the}, $w1$ represents the number of times \textit{the} appears in the entire document.
 
 So a query to the document for the presence of w1 and w5 would be represented by the following vector 
 \\\\
-$Q=<1, 0, 0, 1, 0, ....>$
+$Q=<1, 0, 0, 0, 1, ....>$
 \\\\
-Taking the normalized dot product between the query and document vectors will indicate whether or not those words appear in the document.
+Taking the normalized dot product between the query and document vectors will give the percentage of sought after words that actually appear in the document, and also indicates which of those specific words do not.
 
-This works well in the context of history short answer questions because once I know what keywords the gold standard contains I can check to verify those terms occur within the essay response.
+This works well in the context of history short answer questions because once keywords are pulled from the gold standard their presence in the answer can be validated.
 
 \subsection{Combining Techniques}
 By combining the two previously mentioned techniques, I can determine the important named entities and search for their existence in the answer. See the following example (Gold refers to the gold standard essay, against which all the other responses are graded:

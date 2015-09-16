@@ -21,15 +21,15 @@
 \maketitle
 
 \begin{abstract}
-   Automated grading of short answer texts is a difficult and important challenge. In this paper, I propose a solution involving Named Entity Recognition (NER) and vector space models. NER will be used to recognize important words and categorize them into appropriates types, such as people, places, and locations. Vector space models will then be used to validate the presence of these words in the answer.
+   Automated grading of short answer texts is a difficult and important challenge. This paper proposes a solution that combines Named Entity Recognition (NER) and vector space models. NER will be used to recognize important words and categorize them into appropriates types, such as people, places, and locations. Vector space models will then be used to validate the presence of these words in the answer.
 \end{abstract}
 
 \section{Introduction}
-Automated test grading began with simple multiple choice questions, allowing teachers to use computers to grade these tests automatically. However, nothing allowed short answer questions to be automatically graded. After the advent of natural language processing, systems designed for automatically grading essays were put in place.
+Automated test grading began with simple multiple choice questions, allowing teachers to use computers to grade these tests automatically. However, nothing allowed short answer questions to be automatically graded. After the advent of natural language processing, systems designed for automatically grading essays began cropping up.
 
-In 1999, Educational Testing Service (ETS) began to use E-rater for automated scoring of the GMAT Analytical Writing Assesment \cite{burstein_pdf}. As of the time of publication of \cite{burstein_pdf}, the reported discrepancy rate between the E-rater score and the human reader score was less than 3 percent \cite{burstein_pdf}. 
+In 1999, Educational Testing Service (ETS) began to use E-rater for automated scoring of the GMAT Analytical Writing Assesment. As of the time of publication, the reported discrepancy rate between the E-rater score and the human reader score was less than 3 percent \cite{burstein_pdf}. 
 
-Another such system, the Intelligent Essay Assessor, was developed in 2003. It used Latent Semantic Analysis to compare students' answers and ideal essay, or gold standard \cite{auto_marking}.
+Another such system, the Intelligent Essay Assessor, was developed in 2003. It used Latent Semantic Analysis to compare students' answers to an ideal, or gold standard, essay \cite{auto_marking}.
 
 \input{motivation}
 \input{proposeddesign}
