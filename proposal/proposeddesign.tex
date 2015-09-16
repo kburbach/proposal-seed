@@ -1,10 +1,69 @@
 \section{Proposed Design}
 \label{section:propeseddesign}
-[proposed design here]
+I propose using a combination of Named Entity Recognition (NER) and Vector Similarity to objectively grade history answer questions. My goal is to use NER to discover the important details of the answer: people, places, events, countries, dates, etc. After discovering the important named entities, I will use Vector Similarity to validate the presence of these terms in the answer. The output of this proposed system will be an objective score.
 
-\subsection{Some Subsection}
-[subsection here]... look a figure!
+Initially, I plan to use an ideal essay response - also known as the gold standard, to grade the essay answer. If time, I would like to try using a large corpus instead of a gold standard essay to automatically grade the essay responses.
 
+\subsection{Named Entity Recognition}
+ Named Entity Recognition is the ability to classify text to named-entity types such as persons, organizations and locations \cite{recognizing_named_entities_in_tweets}. This is especially useful in the context of history questions. Compared to other subjects, history is much less subjective and more about hard facts.
+
+ I plan to use NER to pull out important people, places, locations, dates, and events from the gold standard essay. By knowing what key named entities are in the gold standard essay, I know what to look for in the actual answer.
+
+ \subsection{Vector Space Models}
+The vector space model represents documents and queries as frequency of words that appear in it. We can take the normalized dot product to determine how closely related two documents are \cite{the_book}.
+
+This would be one possible way to determine how similar the two documents, the gold standard and the essay response, are. However, is the context of short answer history questions, this may not reveal too much. Many of the important facts will only be mentioned once or twice; the highest frequency words will probably be of the part of speech articles. This technique would also not give weight to the important named entities - missing a \textit{the} would be as penalized as missing an entity. Simply using Vector Space Models alone would be insufficient.
+
+However, there is another way that vector space models can be used. Queries are vectors with word frequencies to look for in the main document. Taking the normalized dot product will give you the fractional amount of words that were queried for that actually appear in the document.
+
+Let D be a document $D = <w1, w2, w3, w4, ...., wn>$, where $wi$ is the frequency of the \textit{ith} word in the document. If the first word is \textit{the}, $w1$ represents the number of times \textit{the} appears in the entire document.
+
+So a query to the document for the presence of w1 and w5 would be represented by the following vector 
+\\\\
+$Q=<1, 0, 0, 1, 0, ....>$
+\\\\
+Taking the normalized dot product between the query and document vectors will indicate whether or not those words appear in the document.
+
+This works well in the context of history short answer questions because once I know what keywords the gold standard contains I can check to verify those terms occur within the essay response.
+
+\subsection{Combining Techniques}
+By combining the two previously mentioned techniques, I can determine the important named entities and search for their existence in the answer. See the following example (Gold refers to the gold standard essay, against which all the other responses are graded:
+\\\\
+\textit{Q: When was George Washington's birthday?}\\
+\textit{Gold: George Washington was born on February 22, 1732}\\
+\textit{Answer: George Washington was born on February 22, 1734}
+\\\\
+With a first pass with NER, the proposed system would be able to identify George Washington as type PERSON and his birth date as type DATE. I know now to check the answer for PERSON George Washington and DATE February 22, 1732. Additionally, because the order in which these words appear is known before the fact, I can then form a vectorized query and answer.
+
+Because each word appears only once in the gold standard document, all frequencies are one. The following is a vector respresentation of the gold document and the gold document after a pass over with NER.
+\\\\
+$Doc_G=<1, 1, 1, 1, 1>$\\
+\textit{[PERSON George Washington] was born on [DATE February 22, 1732]}
+\\\\
+Given these two important named entities, a query can be formed to analyze the second document, the essay answer. The query should check for the existence of the words \textit{George Washington} and \textit{February 22, 1732}. The locations of these words in the first document are also known - locations 1 and 5, respectively. Therefore the query would look as follows:
+\\\\
+\textit{Q=<1, 0, 0 , 0, 1>}
+\\\\
+Next, vectorize the second document. An important clarification is that the order the word frequencies appear in the second vector is the same order from the first vector. In other words, the vector of the second document contains the frequencies of the words in the second document in the order that they appear in the first document. So document two would look as follows:
+\\\\
+$Doc_A=<1, 0, 0, 0, 1$
+\\\\
+Now to query the answer document, take the normalized dot product to determine the percentage of searched for terms that were actually found.
+\\\\
+$Doc_A \cdot Q = <1, 0, 0, 0, 1> \cdot <1, 0, 0, 0, 0>$\\
+$Doc_A \cdot Q = \frac{1*1 + 0*0 + 0*0 + 0*0 + 1*0}{2} $\\
+$Doc_A \cdot Q = \frac{1}{2}$\\
+\\\\
+Only $\frac{1}{2}$ words were found in the answer, which was to be expected because the answer had incorrectly written the date. The result of multiplying $w1q$ and $w1a$, where $w1q$ and $w1a$ are the frequency that word one occurs in the query and the answer document, indicates whether that particular word appears in the answer. $w1$ in this case is \textit{George Washington}, so
+\\\\
+$w1q * w1a = 1*1 = 1$
+\\\\
+proves that \textit{George Washington} appears in the answer document.Likewise, if $w4q$ and $w4a$ are the frequency with which the date \textit{February 22, 1732} appears, the following proves that \textit{February 22, 1732}
+\\\\
+$w4q * w4a = 1*0 = 0$
+\\\
+
+In this project, I proposed to combine these techniques as shown above to determine which words are named entities and then search for the occurence of said entities in the answer.
 % \ref{fig:figIdName}
 
 % \begin{figure}[ht!]

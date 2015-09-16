@@ -5,10 +5,11 @@
 
 \usepackage{url}
 \usepackage{hyperref}
+\usepackage{amsmath}
 \hypersetup{breaklinks}
 
 \begin{document}
-\title{Using Named Recognition To Grade Short Answer History Questions}
+\title{Using Named Entity Recognition To Grade Short Answer History Questions}
 \author{Kevin Burbach\\
         University of Colorado - Colorado Springs\\
         1420 Austin Bluffs Pkwy,\\
@@ -23,20 +24,21 @@
    Automated grading of short answer texts is a difficult and important challenge. In this paper, I propose a solution involving Named Entity Recognition (NER) and Vector Similarity Models. I propose NER is used for recognizing important people, places and events. Vector Similarity will then be used to validate the presence of these entities in the answer.
 \end{abstract}
 
-\category{Security and Protection}{Authentication}
-\terms{Security}
-\keywords{Security, Authentication, OAuth, Wifi, Wi-Fi, Cloud}
-
 \section{Introduction}
-Is this where the introduction goes??
+Automated test grading begin with simple multiple choice questions, allowing teachers to use computers to grade these tests automatically. However, nothing allowed short answer questions to be automatically graded. After the advent of natural language processing, systems designed for automatically grading essays were put in place.
 
-\input{motivation}
-\input{relatedwork}
+In 1999, Educational Testing Service (ETS) began to use E-rater for automated scoring of the GMAT Analytical Writing Assesment \cite{recognizing_named_entities_in_tweets}. As of the time of publication of \cite{burstein_pdf}, the reported discrepancy rate between the E-rater score and the human reader score was less than 3 percent \cite{burstein_pdf}. 
+
+Another such system, the Intelligent Essay Assessor, was developed in 2003. It used Latent Semantic Analysis to compare students' answers and ideal essay, or gold standard \cite{auto_marking}
+
+Many such systems already exist, but most seem to be geared toward generic topic domains. One specific area that has been targetted for automatic scoring is English as a Second or Other Language (ESOL). \cite{ESOL} proposed a new method and dataset for grading these ESOL texts. The Cambridge Learner Corpus \cite{ESOL} is large collection of text produced by English language learners and was used as training data. 
+
+Generic grading systems do a fine job scoring, but I propose that a context specific automated scoring system will exceed the results of a generic granding system. In this project, I will attempt to create a specific grading system for history questions that is more accurate than a generic grading system.
+
 \input{proposeddesign}
 \input{implementation}
-\input{futurework}
-\input{conclusion}
 
+\bibdata{citations}
 \bibliography{citations}{}
 \bibliographystyle{plain}
 
