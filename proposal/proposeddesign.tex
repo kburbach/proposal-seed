@@ -1,60 +1,56 @@
 \section{Proposed Design}
 \label{section:propeseddesign}
-This paper proposes using a combination of Named Entity Recognition (NER) and vector space models to objectively grade history answer questions. The goal is to initially use NER to discover the important details of the answer: people, places, events, countries, dates, etc. After discovering the important named entities, vector space models will be used to validate the presence of these terms in the answer. The output of this proposed system will be an objective score.
+The proposed design uses a combination of Named Entity Recognition (NER) and vector space models to objectively grade history answer questions. The goal is to initially use NER to discover the important details of the answer: people, places, events, countries, dates, etc. After discovering the important named entities, vector space models will be used to validate the presence of these terms in the answer. The output of this proposed system will be an objective score.
 
-Initially, the plan to use an ideal essay response - also known as the gold standard, to grade the essay answer. Time permitting, the next step would be to try using a large corpus instead of a gold standard essay to automatically grade the essay responses.
+Initially, the plan to use an ideal essay response - also known as the gold standard - to grade the essay answer. Time permitting, the next step would be to try using a large corpus to automatically grade the essay responses without the need for a gold standard essay.
 
 \subsection{Named Entity Recognition}
- Named Entity Recognition is the ability to classify text into named-entity categories such as persons, organizations and locations \cite{recognizing_named_entities_in_tweets}, which is especially useful in the context of history questions. Compared to other subjects, history is much less subjective and focuses more on concrete details.
+ Named Entity Recognition is the ability to classify text into named-entity categories such as persons, organizations and locations \cite{recognizing_named_entities_in_tweets}, which is especially useful in the context of history questions. Compared to other subjects, history is less subjective and focuses more on concrete details.
 
- The plan is to use NER to pull out important people, places, locations, dates, and events from the gold standard essay. The actual essay response can that be checked for occurence of these terms.
+ The plan is to use NER to pull out important people, places, locations, dates, and events from the gold standard essay. The actual essay response can then be checked for occurence of these terms.
 
  \subsection{Vector Space Models}
-The vector space model is a way to represent a document as a vector containing word frequencies. Vectorizing two different documents allows the normalized dot product to determine how closely those related two documents are \cite{the_book}. This is one possible way to determine the similarity between the gold standard essay and the actual essay answer.
+The vector space model is a way to represent a document as a vector containing word frequencies. Vectorizing two different documents allows the normalized dot product to determine how closely those two documents are related \cite{the_book}. This is one possible way to determine the similarity between the gold standard essay and the actual essay answer.
 
-However, in the context of short answer history questions, this may not reveal too much. Many of the important facts may only be mentioned once or twice; the highest frequency words will probably articles such as \textit{the}, \textit{a}, etc. This technique would also not give weight to the important named entities - missing a word such as \textit{the} would be as penalized as harshly as missing an entity. For this reason, simply using vector space models alone will be insufficient.
+However, in the context of short answer history questions, this may not reveal too much. Many of the important facts may only be mentioned once or twice; the highest frequency words will probably articles such as \textit{the}, \textit{a}, etc. This technique would also not give weight to the important named entities - an answer missing a word such as \textit{the} would be penalized as harshly as an answer missing a named entity. For this reason, simply using vector space models will be insufficient.
 
-Fortunately, there exists an additional way that vector space models can be used. The existence of certain words in a document can be verified using vector queries.
+Fortunately, there exists an additional way that vector space models can be used. The existence of certain words in a document can be verified using vector queries. Let D be a document\\\\ $D = <w1, w2, w3, w4, ...., wn>$\\\\ where $wi$ is the frequency of the \textit{ith} word in the document. If the first word is \textit{the}, $w1$ represents the number of times \textit{the} appears in the entire document.
 
-Let D be a document\\\\ $D = <w1, w2, w3, w4, ...., wn>$\\\\ where $wi$ is the frequency of the \textit{ith} word in the document. If the first word is \textit{the}, $w1$ represents the number of times \textit{the} appears in the entire document.
-
-So a query to the document for the presence of w1 and w5 would be represented by the following vector 
+So a query to the document for the presence of $w1$ and $w5$ would be represented by the following vector 
 \\\\
 $Q=<1, 0, 0, 0, 1, ....>$
 \\\\
 Taking the normalized dot product between the query and document vectors will give the percentage of sought after words that actually appear in the document, and also indicates which of those specific words do not.
 
-This works well in the context of history short answer questions because once keywords are pulled from the gold standard their presence in the answer can be validated.
-
 \subsection{Combining Techniques}
-Combining the two previously mentioned techniques can determine the important named entities and also search for their existence in the answer. See the following example, in which \textit{Gold} refers to the gold standard essay, against which all the other responses are graded:
+Combining the two previously mentioned techniques can determine the important named entities and also search for their existence in the answer. See the following example, in which \textit{Gold} refers to the gold standard essay:
 \\\\
 \textit{Q: When was George Washington's birthday?}\\
 \textit{Gold: George Washington was born on February 22, 1732}\\
 \textit{Answer: George Washington was born on February 22, 1734}
 \\\\
-Using NER allows the proposed system to identify George Washington as type PERSON and his birth date as type DATE. The system will now know to check the answer for PERSON George Washington and DATE February 22, 1732. Because the order in which these words appear is known beforehand, a vectorized query can be formed to probe the answer.
+NER allows the proposed system to identify George Washington as type PERSON and his birth date as type DATE. The system will now know to check the answer for PERSON George Washington and DATE February 22, 1732. Because the order in which these words appear is known beforehand, a vectorized query can be formed to probe the answer.
 
-The following is a vector respresentation of the gold document and the gold document after a pass over with NER. Because each word appears only once in the gold standard document, all frequencies are one.
+Whats follows is a vector respresentation of the gold standard document and said document after a pass over with NER. Because each word appears only once in the gold standard document, all frequencies are one.
 \\\\
 $Doc_G=<1, 1, 1, 1, 1>$\\
 \textit{[PERSON George Washington] was born on [DATE February 22, 1732]}
 \\\\
-Given these two important named entities, a query can be formed to analyze the second document, the essay answer. The query should check for the existence of the words \textit{George Washington} and \textit{February 22, 1732}. The locations of these words in the first document are also known - locations 1 and 5, respectively. Therefore the query would look as follows:
+Given these two recognized entities, a query can be formed to analyze the second document, the essay answer. The query should check for the existence of the words \textit{George Washington} and \textit{February 22, 1732}. The locations of these words in the first document are also known - locations 1 and 5, respectively. Therefore the query would look as follows:
 \\\\
 $Q=<1, 0, 0 , 0, 1>$
 \\\\
-Next, vectorize the second document. An important clarification is that the order the word frequencies appear in the second vector is the same order from the first vector. In other words, the vectorized second document contains word frequencies in the order that they appear in the first document. So document two would look as follows:
+The next would be to vectorize the second document. An important clarification is that the order the word frequencies appear in the second vector is the same word order from the first vector. In other words, the vectorized second document contains word frequencies in the order that they appear in the first document. So document two would look as follows:
 \\\\
 $Doc_A=<1, 0, 0, 0, 0>$
 \\\\
-Now to query the answer document, take the normalized dot product to determine the percentage of searched for terms that were actually found.
+The final step would be to query the answer document by taking the normalized dot product to determine the percentage of searched for terms that were actually found.
 \\\\
 $Doc_A \cdot Q = <1, 0, 0, 0, 0> \cdot <1, 0, 0, 0, 1>$\\
 $Doc_A \cdot Q = \frac{1*1 + 0*0 + 0*0 + 0*0 + 0*1}{2} $\\
 $Doc_A \cdot Q = \frac{1}{2}$\\
 \\\\
-Only $\frac{1}{2}$ of searched for words were found in the answer, which was to be expected because the answer had incorrectly written the date. If $w1q$ and $w1a$ are the frequency that word one occurs in the query and the answer document, the result of multiplying $w1q$ and $w1a$ indicates whether that particular word appears in the answer. $w1$ in this case is \textit{George Washington}, so the following proves existence in the answer.
+Only $\frac{1}{2}$ of searched for words were found in the answer, which was to be expected because the answer did not contain the correct date. If $w1q$ and $w1a$ are the frequencies that word one occurs in the query and the answer document, the result of multiplying $w1q$ and $w1a$ indicates whether that particular word appears in the answer. $w1$ in this case is \textit{George Washington}, so the following proves $w1$ exists in the answer.
 \\\\
 $w1q * w1a = 1*1 = 1$
 \\\\
